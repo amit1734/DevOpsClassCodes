@@ -1,0 +1,39 @@
+pipeline{
+    agent any
+    tools {
+        maven 'amitmaven'
+    }
+    stages {
+        stage ('clone scm'){
+            steps {
+                git url: 'https://github.com/amit1734/DevOpsClassCodes.git'
+            }
+        }
+        stage ('compile'){
+            steps {
+                sh 'mvn compile'            
+            }
+        }
+        stage ('code_review_job'){
+            steps {
+                sh 'mvn -P metrics pmd:pmd'
+            }
+        }
+        stage ('unit_test_job'){
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage ('metric_check_job'){
+            steps {
+                sh 'mvn cobertura:cobertura -D cobertura.report.format=xml'
+            }
+        }
+        stage ('package'){
+            steps {
+            sh 'mvn package'
+        }
+    }
+ }
+
+}
